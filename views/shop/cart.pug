@@ -5,12 +5,16 @@ block content
     body
         main
             if products.length > 0 
-                ul 
-                each p in products
-                    li
-                        p #{p.productData.title} (#{p.qty})
-                        form(action="/cart-delete-item" method="POST")
-                            input(type="hidden" name="productId" value=p.productData.id)
-                            button.btn(type="submit") Delete
+                ul.cart__item-list 
+                    each p in products
+                        li.cart__item
+                            p #{p.title} (#{p.cartItem.quantity})
+                            form(action="/cart-delete-item" method="POST")
+                                input(type="hidden" name="productId" value=p.id)
+                                button.btn(type="submit") Delete
+                hr            
+                div.centered
+                    form(action="/create-order" method="POST")
+                        button.btn(type="submit") Order Now
             else
                 h1 No Products in Cart
