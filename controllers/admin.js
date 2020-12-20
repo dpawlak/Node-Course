@@ -4,6 +4,7 @@ exports.getAddProduct = (req, res, next) => {
     res.render('admin/add-product', {
         pageTitle: 'Add Product', 
         path: '/admin/add-product',
+        isAuthenticated: req.session.isLoggedIn
     })
 }
 
@@ -43,7 +44,8 @@ exports.getEditProduct = (req, res, next) => {
             res.render('admin/edit-product', {
                 pageTitle: 'Edit Product',
                 path: '/admin/edit-product',
-                product: product
+                product: product,
+                isAuthenticated: req.session.isLoggedIn
             })
         })
         .catch(err => console.log(err))
@@ -56,12 +58,13 @@ exports.postEditProduct = (req, res, next) => {
     const updatedImageUrl = req.body.imageUrl
     const updatedDesc = req.body.description
 
-    Product.findById(prodId).then(product => {
-        product.title = updatedTitle
-        product.price = updatedPrice
-        product.description = updatedDesc
-        product.imageUrl = updatedImageUrl
-        return product.save() 
+    Product.findById(prodId)
+        .then(product => {
+            product.title = updatedTitle
+            product.price = updatedPrice
+            product.description = updatedDesc
+            product.imageUrl = updatedImageUrl
+            return product.save() 
     })
     .then(result => {
           console.log('UPDATED PRODUCT!');
@@ -70,19 +73,18 @@ exports.postEditProduct = (req, res, next) => {
         .catch(err => console.log(err));
     };
       
-        
-        
-
 exports.getProducts = (req, res, next) => {
     Product.find()
     // .select('title price -_id')
     // .populate('userId', 'name')
         .then(products => {
-        res.render('admin/products', {
-            prods: products,
-            pageTitle: 'Admin Products',
-            path: '/admin/products'
-        });
+            console.log(products)
+            res.render('admin/products', {
+                prods: products,
+                pageTitle: 'Admin Products',
+                path: '/admin/products',
+                isAuthenticated: req.session.isLoggedIn
+            });
     })
     .catch(err => console.log(err));
 };
