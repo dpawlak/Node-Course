@@ -4,7 +4,6 @@ exports.getAddProduct = (req, res, next) => {
     res.render('admin/add-product', {
         pageTitle: 'Add Product', 
         path: '/admin/add-product',
-        isAuthenticated: req.session.isLoggedIn
     })
 }
 
@@ -34,7 +33,6 @@ exports.postAddProduct = (req, res, next) => {
 
 exports.getEditProduct = (req, res, next) => {
     const prodId = req.params.productId
-    
         // .getProducts({where: { id: prodId } })
         Product.findById(prodId)
         .then(product => {
@@ -45,7 +43,6 @@ exports.getEditProduct = (req, res, next) => {
                 pageTitle: 'Edit Product',
                 path: '/admin/edit-product',
                 product: product,
-                isAuthenticated: req.session.isLoggedIn
             })
         })
         .catch(err => console.log(err))
@@ -83,7 +80,6 @@ exports.getProducts = (req, res, next) => {
                 prods: products,
                 pageTitle: 'Admin Products',
                 path: '/admin/products',
-                isAuthenticated: req.session.isLoggedIn
             });
     })
     .catch(err => console.log(err));
