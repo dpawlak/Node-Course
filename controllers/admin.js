@@ -1,9 +1,27 @@
+const { validationResult } = require('express-validator/check') 
+
 const Product = require('../models/product')
 
 exports.getAddProduct = (req, res, next) => {
+
+    let message = req.flash('error')
+    if (message.length > 0) {
+        message = message[0]
+    } else {
+        message = null
+    }
+
     res.render('admin/add-product', {
         pageTitle: 'Add Product', 
         path: '/admin/add-product',
+        errorMessage: message,
+        oldInput: {
+            title: '',
+            price: '',
+            description: '',
+            imageUrl: '',
+        },
+        validationErrors: []
     })
 }
 
@@ -12,6 +30,24 @@ exports.postAddProduct = (req, res, next) => {
     const imageUrl = req.body.imageUrl;
     const price = req.body.price;
     const description =req.body.description;
+    const errors = validationResult(req)
+
+    if(!errors.isEmpty()) {
+        console.log(errors.array())
+        return res.status(422).render('admin/add-product', {
+            path: '/add-product',
+            pageTitle: 'Add Product',
+            errorMessage: errors.array()[0].msg,
+            oldInput: {
+                title: title,
+                price: price,
+                description: description,
+                imageUrl: imageUrl
+            },
+            validationErrors: errors.array()
+        })
+    }
+
     const product = new Product({
         title: title, 
         price: price, 
@@ -43,6 +79,7 @@ exports.getEditProduct = (req, res, next) => {
                 pageTitle: 'Edit Product',
                 path: '/admin/edit-product',
                 product: product,
+                
             })
         })
         .catch(err => console.log(err))
@@ -54,6 +91,20 @@ exports.postEditProduct = (req, res, next) => {
     const updatedPrice = req.body.price
     const updatedImageUrl = req.body.imageUrl
     const updatedDesc = req.body.description
+
+    if(!errors.isEmpty()) {
+        console.log(errors.array())
+        return res.status(422).render('admin/edit-product', {
+            path: '/edit-product',
+            pageTitle: 'Edit Product',
+            errorMessage: errors.array()[0].msg,
+            oldInput: {
+                updatedTitle: updatedTitle,
+              
+            },
+            validationErrors: errors.array()
+        })
+    }
 
     Product.findById(prodId)
         .then(product => {

@@ -6,19 +6,26 @@ block styles
 
 block content 
     main
-        form.product-form(action="/admin/add-product", method="POST")
+        if (errorMessage) 
+            div(class="user-message user-message--error") #{errorMessage}
+
+        form.product-form(action="/admin/add-product" method="POST" novalidate)
+
             .form-control
-                label(for="title") Title
-                input(type="text", name="title")#title 
+                label(for="title" name="title") Title
+                input(class=validationErrors.find(e => e.param === 'title') ? 'invalid' : '' type="text" name="title" value=oldInput.title)#title 
+            
             .form-control
                 label(for="imageUrl") Image Url
-                input(type="text" name="imageUrl")#imageUrl
+                input(class=validationErrors.find(e => e.param === 'imageUrl') ? 'invalid' : '' type="text" name="imageUrl" value=oldInput.imageUrl)#imageUrl
+            
             .form-control
                 label(for="price") Price
-                input(type="number" name="price" step="0.01")#price
+                input(class=validationErrors.find(e => e.param === 'price') ? 'invalid' : '' type="text" name="price" value=oldInput.price)#price
+            
             .form-control
                 label(for="description") Description
-                textarea(name="description" rows="5")#description
+                textarea(class=validationErrors.find(e => e.param === 'description') ? 'invalid' : '' type="text" name="description" value=oldInput.description)#description
             
             input(type="hidden" name="_csrf" value=csrfToken)
             button.btn(type="submit") Add Product
