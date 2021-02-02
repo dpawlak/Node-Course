@@ -40,12 +40,23 @@ router.get('/edit-product/:productId', isAuth, adminController.getEditProduct)
 router.post(
     '/edit-product', 
     [
-    body('updatedTitle').isAlphanumeric().isLength({ min: 3 }).trim(),
-    body('imageUrl').isURL(),
-    body('price').isFloat(),
-    body('description').isLength({min: 5, max: 400 }).trim(),
-
-], isAuth, adminController.postEditProduct)
+    body('title')
+        .isAlphanumeric()
+        .isLength({ min: 3 })
+        .trim()
+        .withMessage('Product title must be 3 characters long and must be alphanumeric.'),
+    body('imageUrl')
+        .isURL()
+        .withMessage('Image must be a url link.'),
+    body('price')
+        .isFloat()
+        .withMessage('Price must be a number and contain only one decimal.'),
+    body('description')
+        .isLength({min: 5, max: 400 })
+        .trim()
+        .withMessage('Description must be between 5 and 400 characters.')
+    ], 
+    isAuth, adminController.postEditProduct)
 
 router.post('/delete-product', isAuth, adminController.postDeleteProduct)
 
