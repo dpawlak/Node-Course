@@ -119,14 +119,14 @@ exports.postEditProduct = (req, res, next) => {
         return res.status(422).render('admin/edit-product', {
             path: '/edit-product',
             pageTitle: 'Edit Product',
-            errorMessage: errors.array()[0].msg,
             product: {
                 title: title,
                 price: price,
                 description: description,
-                imageUrl: imageUrl
+                imageUrl: imageUrl,
+                _id: prodId
             },
-
+            errorMessage: errors.array()[0].msg,
             validationErrors: errors.array()
         })
     }
