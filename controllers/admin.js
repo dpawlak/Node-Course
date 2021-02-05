@@ -58,24 +58,23 @@ exports.postAddProduct = (req, res, next) => {
     product
         .save()
         .then(result => {
-        //console.log(result)
         console.log('Created Product')
         res.redirect('/admin/products')
         })
-    .catch(err => {
-        console.log(err)
+        .catch(err => {
+            const error = new Error(err)
+            error.httpStatusCode = 500
+            return next(error)
     })
 }
 
 exports.getEditProduct = (req, res, next) => {
-
     let message = req.flash('error')
     if (message.length > 0) {
         message = message[0]
     } else {
         message = null
     }
-
     const prodId = req.params.productId
         // .getProducts({where: { id: prodId } })
         Product.findById(prodId)
@@ -97,7 +96,11 @@ exports.getEditProduct = (req, res, next) => {
                 validationErrors: []  
             })
         })
-        .catch(err => console.log(err))
+        .catch(err => {
+            const error = new Error(err)
+            error.httpStatusCode = 500
+            return next(error)
+        })
     }
 
 exports.postEditProduct = (req, res, next) => {
@@ -145,7 +148,11 @@ exports.postEditProduct = (req, res, next) => {
                 res.redirect('/admin/products');
               })
             })
-        .catch(err => console.log(err));
+        .catch(err => {
+            const error = new Error(err)
+            error.httpStatusCode = 500
+            return next(error)
+        });
     };
       
 exports.getProducts = (req, res, next) => {
@@ -160,7 +167,11 @@ exports.getProducts = (req, res, next) => {
                 path: '/admin/products',
             });
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+        const error = new Error(err)
+        error.httpStatusCode = 500
+        return next(error)
+    });
 };
 exports.postDeleteProduct = (req, res, next) => {
     const prodId = req.body.productId
@@ -169,5 +180,9 @@ exports.postDeleteProduct = (req, res, next) => {
             console.log('Destroyed Product')
             res.redirect('/admin/products')
         })
-        .catch(err => console.log(err))
+        .catch(err => {
+            const error = new Error(err)
+            error.httpStatusCode = 500
+            return next(error)
+        })
     }    
