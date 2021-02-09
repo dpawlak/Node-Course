@@ -21,9 +21,7 @@ router.post(
         .isLength({ min: 3 })
         .trim()
         .withMessage('Product title must be 3 characters long and must be alphanumeric.'),
-    body('imageUrl')
-        .isURL()
-        .withMessage('Image must be a url link.'),
+    
     body('price')
         .isFloat()
         .withMessage('Price must be a number and contain only one decimal.'),
@@ -45,9 +43,6 @@ router.post(
         .isLength({ min: 3 })
         .trim()
         .withMessage('Product title must be 3 characters long and must be alphanumeric.'),
-    body('imageUrl')
-        .isURL()
-        .withMessage('Image must be a url link.'),
     body('price')
         .isFloat()
         .withMessage('Price must be a number and contain only one decimal.'),

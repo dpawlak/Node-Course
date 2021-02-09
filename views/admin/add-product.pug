@@ -9,15 +9,19 @@ block content
         if (errorMessage) 
             div(class="user-message user-message--error") #{errorMessage}
 
-        form.product-form(action="/admin/add-product" method="POST" novalidate)
+        form.product-form(action="/admin/add-product" method="POST" novalidate enctype="multipart/form-data")
 
             .form-control
                 label(for="title" name="title") Title
                 input(class=validationErrors.find(e => e.param === 'title') ? 'invalid' : '' type="text" name="title" value=oldInput.title)#title 
             
+            //- .form-control
+            //-     label(for="imageUrl") Image Url
+            //-     input(class=validationErrors.find(e => e.param === 'imageUrl') ? 'invalid' : '' type="text" name="imageUrl" value=oldInput.imageUrl)#imageUrl
+            
             .form-control
                 label(for="imageUrl") Image Url
-                input(class=validationErrors.find(e => e.param === 'imageUrl') ? 'invalid' : '' type="text" name="imageUrl" value=oldInput.imageUrl)#imageUrl
+                input(type="file" name="image")#image
             
             .form-control
                 label(for="price") Price
