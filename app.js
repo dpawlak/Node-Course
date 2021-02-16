@@ -14,6 +14,7 @@ const User = require('./models/user')
 const MONGODB_URI = 
     'mongodb+srv://Daniel:maha6kali@cluster0.5jkca.mongodb.net/node-complete'
 
+
 const app = express()
 const store = new MongoDBStore({
     uri: MONGODB_URI,
@@ -130,3 +131,24 @@ mongoose
 
 
 
+app.get("/", (req, res) =>
+  res.render("index.pug", {keyPublishable}));
+
+app.post("/charge", (req, res) => {
+  let amount = 500;
+
+  stripe.customers.create({
+     email: req.body.stripeEmail,
+    source: req.body.stripeToken
+  })
+  .then(customer =>
+    stripe.charges.create({
+      amount,
+      description: "Sample Charge",
+         currency: "usd",
+         customer: customer.id
+    }))
+  .then(charge => res.render("charge.pug"));
+});
+
+app.listen(4567);
