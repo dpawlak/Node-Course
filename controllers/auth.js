@@ -7,11 +7,8 @@ const { validationResult } = require('express-validator/check')
 
 const User = require('../models/user')
 
-const transporter = nodemailer.createTransport(sendgridTransport({
-    auth: {
-        api_key: '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',
-    }
-}))
+const sgMail = require('@sendgrid/mail')
+sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 exports.getLogin = (req, res, next) => {
     let message = req.flash('error')
@@ -144,9 +141,9 @@ exports.postSignup = (req, res, next) => {
                 })
                 .then(result => {
                     res.redirect('/login')
-                    return transporter.sendMail({
-                        to: email,
-                        from: 'shop@pawlaktech.com',
+                    return sgMail.send({
+                        to: email, // Recepient
+                        from: 'pawlaktech.com', // Verified sender
                         subject: "Signup succeded!",
                         html: '<h1>You succesfully signed up!</h1>'
                     })
@@ -200,10 +197,10 @@ exports.postReset = (req, res, next) => {
             })
             .then(result => {
                 res.redirect('/')
-                transporter.sendMail({
-                    to: req.body.email,
-                    from: 'shop@node-complete.com',
-                    subject: 'Password Rese``t',
+                sgMail.send({
+                    to: req.body.email, // Recepient
+                    from: 'pawlaktech.com', // From our verified sender
+                    subject: 'Password Reset',
                     html: `
                         <p>You have requested a password reset.</p>
                         <p>Click this <a href="http://localhost:3000/reset/${token}">link</a> to set a new password.</p>
