@@ -1,12 +1,9 @@
 const fs = require("fs");
 const path = require("path");
-// Add stripe
-
+const stripe = require("stripe")('sk_test_51ILGCCCEPuLHGmB6NJb4aObNH2PerqelZ1iiNtCVXuaRtZStDle5CXTfWrmLCZlCUdM7ZS35uCvinbWoxkWkTsA700uQA2JhdQ')
 const PDFDocument = require("pdfkit");
-
 const Product = require('../models/product')
 const Order = require('../models/order')
-
 const ITEMS_PER_PAGE = 2
 
 exports.getProducts = (req, res, next) => {
@@ -99,14 +96,14 @@ exports.getCart = (req, res, next) => {
                     path: '/cart',
                     pageTitle: 'Your Cart',
                     products: products,
-            })
-        })
+                    })
+                })
         .catch(err => {
             const error = new Error(err)
             error.httpStatusCode = 500
             return next(error)
         })
-}
+  }
 
 exports.postCart = (req, res, next) => {
     const prodId = req.body.productId
@@ -133,48 +130,50 @@ exports.postCartDeleteProduct = (req, res, next) => {
             return next(error)
         })
 }
+
 exports.getCheckout = (req, res, next) => {
-    let products;
-    let total = 0;
+    let products
+    let total = 0
     req.user
-      .populate('cart.items.productId')
-      .execPopulate()
-      .then(user => {
-        products = user.cart.items;
-        total = 0;
-        products.forEach(p => {
-          total += p.quantity * p.productId.price;
-        });
-  
-        return stripe.checkout.sessions.create({
-          payment_method_types: ['card'],
-          line_items: products.map(p => {
-            return {
-              name: p.productId.title,
-              description: p.productId.description,
-              amount: p.productId.price * 100,
-              currency: 'usd',
-              quantity: p.quantity
-            };
-          }),
-          success_url: req.protocol + '://' + req.get('host') + '/checkout/success', 
-          cancel_url: req.protocol + '://' + req.get('host') + '/checkout/cancel'
-        });
-      })
-      .then(session => {
-        res.render('shop/checkout', {
-          path: '/checkout',
-          pageTitle: 'Checkout',
-          products: products,
-          totalSum: total,
-          sessionId: session.id
-        });
-      })
-      .catch(err => {
-        const error = new Error(err);
-        error.httpStatusCode = 500;
-        return next(error);
-      });
+        .populate('cart.items.productId')
+        .execPopulate()
+        .then(user => {
+            products = user.cart.items
+            total = 0
+            products.forEach(p => {
+              total += p.quantity * p.productId.price
+            })
+
+            return stripe.checkout.sessions.create({
+                payment_method_types: ['card'],
+                line_items: products.map(p => {
+                    return {
+                        name: p.productId.title,
+                        description: p.productId.description,
+                        amount: p.productId.price * 100,
+                        currency: 'usd',
+                        quantity: p.quantity
+                    }
+                }),
+                success_url: req.protocol + '://' + req.get('host') + '/checkout/success',
+                cancel_url: req.protocol + '://' + req.get('host') + '/checkout/cancel'
+            })
+        })
+        .then(session => {
+            res.render('shop/checkout', {
+                path: '/checkout',
+                pageTitle: 'Your checkout',
+                products: products,
+                totalSum: total,
+                sessionId: session.id
+            })
+        })
+            
+        .catch(err => {
+            const error = new Error(err)
+            error.httpStatusCode = 500
+            return next(error)
+        })
   };
 
   exports.getCheckoutSuccess = (req, res, next) => {

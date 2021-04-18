@@ -7,17 +7,19 @@ const MongoDBStore = require('connect-mongodb-session')(session)
 const csrf = require('csurf')
 const flash = require('connect-flash')
 const multer = require('multer')
-
 const errorController = require('./controllers/error')
 const User = require('./models/user')
 
-// Add MONGODB_URI
+const MONGODB_URI = 
+    'mongodb+srv://Daniel:maha6kali@cluster0.5jkca.mongodb.net/node-complete'
 
 const app = express()
+
 const store = new MongoDBStore({
     uri: MONGODB_URI,
     collection: 'sessions',
 })
+
 const csrfProtection = csrf()
 
 const fileStorage = multer.diskStorage({
@@ -39,10 +41,13 @@ const fileFilter = (req, file, cb) => {
 }
 
 app.set('view engine', 'pug')
+
 app.set('views', 'views')
 
 const adminRoutes = require('./routes/admin')
+
 const shopRoutes = require('./routes/shop')
+
 const authRoutes = require('./routes/auth')
 
 app.use(bodyParser.urlencoded({extended: false}))
@@ -62,6 +67,7 @@ app.use(
     })
 )
 app.use(csrfProtection)
+
 app.use(flash())
 
 app.use((req, res, next) => {
@@ -99,12 +105,11 @@ app.use((req, res, next) => {
       .catch(err => console.log(err))
   });
   
-
-
 app.use('/admin', adminRoutes)
-app.use(shopRoutes)
-app.use(authRoutes)
 
+app.use(shopRoutes)
+
+app.use(authRoutes)
 
 app.get('/500', errorController.get500)
 
@@ -130,23 +135,7 @@ mongoose
 
 
 app.get("/", (req, res) =>
-  res.render("index.pug", {keyPublishable}));
-
-app.post("/charge", (req, res) => {
-  let amount = 500;
-
-  stripe.customers.create({
-     email: req.body.stripeEmail,
-    source: req.body.stripeToken
-  })
-  .then(customer =>
-    stripe.charges.create({
-      amount,
-      description: "Sample Charge",
-         currency: "usd",
-         customer: customer.id
-    }))
-  .then(charge => res.render("charge.pug"));
-});
+  res.render("index.pug", {keyPublishable})
+);
 
 app.listen(4567);
