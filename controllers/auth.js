@@ -6,7 +6,8 @@ const { validationResult } = require('express-validator/check')
 const User = require('../models/user')
 
 
-// // Enter your sendgrid key
+// Enter your sendgrid key
+
 // const transporter = nodemailer.createTransport(sendgridTransport({
 //     auth: {
 //         api_key: 
@@ -201,7 +202,7 @@ exports.postReset = (req, res, next) => {
             })
             .then(result => {
                 res.redirect('/')
-                sgMail.send({
+                transporter.sendMail({
                     to: req.body.email, // Recepient
                     from: 'dbhill1234@gmail.com', // From our verified sender
                     subject: 'Password Reset',
