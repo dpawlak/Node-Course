@@ -66,6 +66,7 @@ app.use(
         store: store
     })
 )
+
 app.use(csrfProtection)
 
 app.use(flash())
@@ -131,8 +132,6 @@ mongoose
 .catch(err => {
     console.log(err)
 })
-
-
 
 app.get("/", (req, res) =>
   res.render("index.pug", {keyPublishable})

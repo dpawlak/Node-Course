@@ -1,14 +1,17 @@
 const crypto = require('crypto')
-
 const bcrypt = require('bcryptjs')
 const nodemailer = require('nodemailer')
 const sendgridTransport = require('nodemailer-sendgrid-transport')
 const { validationResult } = require('express-validator/check')
-
 const User = require('../models/user')
 
-const sgMail = require('@sendgrid/mail')
-sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+
+// // Enter your sendgrid key
+// const transporter = nodemailer.createTransport(sendgridTransport({
+//     auth: {
+//         api_key: 
+//     }
+// }))
 
 exports.getLogin = (req, res, next) => {
     let message = req.flash('error')
@@ -128,7 +131,6 @@ exports.postSignup = (req, res, next) => {
         })
     }
 
-    
             bcrypt
                 .hash(password, 12)
                 .then(hashedPassword => {
@@ -141,19 +143,21 @@ exports.postSignup = (req, res, next) => {
                 })
                 .then(result => {
                     res.redirect('/login')
-                    return sgMail.send({
-                        to: email, // Recepient
-                        from: 'pawlaktech.com', // Verified sender
-                        subject: "Signup succeded!",
-                        html: '<h1>You succesfully signed up!</h1>'
+                    return transporter.sendMail({
+                        to: email,
+                        from: 'dbhill1234@gmail.com',
+                        subject:'Signup succeded!',
+                        html:'<h1>You signed up!</h1>'
                     })
-                
+                })
+                .catch(err => {
+                    console.log(err)
+                }) 
                 .catch(err => {
                     const error = new Error(err)
                     error.httpStatusCode = 500
                     return next(error)
                 })
-            })
         };
 
 exports.postLogout = (req, res, next) => {
@@ -199,7 +203,7 @@ exports.postReset = (req, res, next) => {
                 res.redirect('/')
                 sgMail.send({
                     to: req.body.email, // Recepient
-                    from: 'pawlaktech.com', // From our verified sender
+                    from: 'dbhill1234@gmail.com', // From our verified sender
                     subject: 'Password Reset',
                     html: `
                         <p>You have requested a password reset.</p>
