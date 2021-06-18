@@ -1,0 +1,20 @@
+extends ../layouts/main-layout.pug
+
+block styles 
+    link(rel="stylesheet", href="/css/orders.css")
+
+block content 
+    main
+        if orders.length <= 0
+            h1 Nothing here yet!
+        else 
+            ul.orders
+                each order in orders 
+                    li.order__item 
+                        h1 #{order._id} 
+                            a(href="/orders/"+order._id) Invoice
+                        ul.orders__products 
+                            each product in order.products 
+                                li.orders__products-item #{product.product.title} (#{product.quantity}) 
+                                    
+                            
